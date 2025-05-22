@@ -25,10 +25,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-   generate: true
-
-flutter_gen:
-  output: lib/gen
+  generate: true
 
 
 

@@ -1,41 +1,29 @@
 workflows:
-  ios-only-build:
-    name: iOS Only Build
-    max_build_duration: 60
+  ios-build-fix:
+    name: iOS Build with -G Fix
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
-
     scripts:
-      - name: Flutter pub get
-        script: flutter pub get
-
-      - name: Подготовка iOS (генерация недостающих файлов)
-        script: flutter create .
-
-      - name: Установка CocoaPods
+      - name: Install dependencies
+        script: |
+          flutter pub get
+      - name: Create iOS project if missing
+        script: |
+          if [ ! -f "ios/Podfile" ]; then
+            flutter build ios --release --no-codesign || true
+          fi
+      - name: Run pod install
         script: |
           cd ios
           pod install
-
-      - name: Сборка iOS-приложения без подписи
-        script: flutter build ios --release --no-codesign
-
-      - name: Архивация Runner.app
+          cd ..
+      - name: Remove unsupported '-G' flag
         script: |
-          mkdir -p build/runner
-          cp -R build/ios/iphoneos/Runner.app build/runner/
-          cd build/runner
-          zip -r runner.apa.zip Runner.app
-
+          find ios/Pods -type f -name '*.xcconfig' -exec sed -i '' 's/-G//g' {} +
+      - name: Build iOS app (no codesign)
+        script: |
+          flutter build ios --release --no-codesign
     artifacts:
-      - build/runner/runner.apa.zip
-
-    publishing:
-      email:
-        recipients:
-          - 231549@astanait.edu.kz
-        notify:
-          success: true
-          failure: true
+      - build/ios/iphoneos/Runner.app

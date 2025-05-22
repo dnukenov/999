@@ -2,6 +2,7 @@ workflows:
   ios-release:
     name: iOS Release Build
     environment:
+      sdk: '>=3.8.0 <4.0.0'
       flutter: stable
       xcode: latest
       cocoapods: default

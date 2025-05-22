@@ -1,38 +1,28 @@
 workflows:
-  ios-release-workflow:
-    name: Build iOS release without codesign
-    max_build_duration: 60
+  ios-release:
+    name: iOS Release Build
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: 'main'
-          include: true
     scripts:
-      - name: Clean build
-        script: |
-          flutter clean
-      - name: Get Flutter packages
+      - name: Установка зависимостей Flutter
         script: |
           flutter pub get
-      - name: Install CocoaPods dependencies
+      - name: Очистка предыдущих сборок
         script: |
-          cd ios
-          pod install
-          cd ..
-      - name: Build iOS release (no codesign)
+          flutter clean
+      - name: Сборка iOS-приложения без подписи
         script: |
           flutter build ios --release --no-codesign
-      - name: Package .app into runner.ipa.zip
+      - name: Удаление флага '-G' из настроек сборки
         script: |
-          mkdir -p build/ios/archive
+          find . -name "project.pbxproj" -exec sed -i '' 's/-G//g' {} +
+      - name: Упаковка Runner.ipa в zip
+        script: |
           cd build/ios/iphoneos
-          zip -r ../../archive/runner.app.zip Runner.app
+          zip -r Runner.ipa.zip Runner.app
     artifacts:
-      - build/ios/archive/runner.app.zip
+      - build/ios/iphoneos/Runner.ipa.zip
 
 

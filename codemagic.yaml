@@ -1,6 +1,6 @@
 workflows:
   ios-build-fix:
-    name: iOS Build with -G Fix
+    name: iOS Build without -G
     environment:
       flutter: stable
       xcode: latest
@@ -9,7 +9,7 @@ workflows:
       - name: Install dependencies
         script: |
           flutter pub get
-      - name: Create iOS project if missing
+      - name: Generate Podfile (if missing)
         script: |
           if [ ! -f "ios/Podfile" ]; then
             flutter build ios --release --no-codesign || true
@@ -19,11 +19,12 @@ workflows:
           cd ios
           pod install
           cd ..
-      - name: Remove unsupported '-G' flag
+      - name: Remove '-G' from project files
         script: |
-          find ios/Pods -type f -name '*.xcconfig' -exec sed -i '' 's/-G//g' {} +
-      - name: Build iOS app (no codesign)
+          find ios -type f \( -name "*.xcconfig" -o -name "project.pbxproj" \) -exec sed -i '' 's/-G//g' {} +
+      - name: Build iOS app
         script: |
           flutter build ios --release --no-codesign
     artifacts:
       - build/ios/iphoneos/Runner.app
+

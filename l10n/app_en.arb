@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "appTitle": "Savings Calculator",
+  "welcome": "Welcome!",
+  "introText": "Track your savings easily and efficiently.",
+  "developedBy": "Developed by YourName",
+  "renameEntry": "Rename Entry",
+  "enterNewName": "Enter new name",
+  "cancel": "Cancel",
+  "save": "Save",
+  "home": "Home",
+  "aboutTitle": "About",
+  "aboutDescription": "This is an application to track your monthly savings.",
+  "settings": "Settings",
+  "chooseTheme": "Choose Theme",
+  "chooseLanguage": "Choose Language",
+  "light": "Light",
+  "dark": "Dark",
+  "aboutExtraInfo": "Track savings and plan your financial goals easily."
+}

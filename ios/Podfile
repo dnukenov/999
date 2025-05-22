@@ -1,19 +1,1 @@
-# Поддерживаемая минимальная версия платформы
-platform :ios, '12.0'
 
-# Подключаем Flutter
-require File.expand_path('../Flutter/ephemeral/.flutter-plugins', __FILE__)
-require File.expand_path('../Flutter/ephemeral/.flutter-plugins-dependencies', __FILE__)
-
-project 'Runner', {
-  'Debug' => :debug,
-  'Profile' => :release,
-  'Release' => :release,
-}
-
-target 'Runner' do
-  use_frameworks!
-  use_modular_headers!
-
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-end

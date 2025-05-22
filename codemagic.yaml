@@ -1,30 +1,38 @@
 workflows:
-  ios-build-fix:
-    name: iOS Build without -G
+  ios-release-workflow:
+    name: Build iOS release without codesign
+    max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
     scripts:
-      - name: Install dependencies
+      - name: Clean build
+        script: |
+          flutter clean
+      - name: Get Flutter packages
         script: |
           flutter pub get
-      - name: Generate Podfile (if missing)
-        script: |
-          if [ ! -f "ios/Podfile" ]; then
-            flutter build ios --release --no-codesign || true
-          fi
-      - name: Run pod install
+      - name: Install CocoaPods dependencies
         script: |
           cd ios
           pod install
           cd ..
-      - name: Remove '-G' from project files
-        script: |
-          find ios -type f \( -name "*.xcconfig" -o -name "project.pbxproj" \) -exec sed -i '' 's/-G//g' {} +
-      - name: Build iOS app
+      - name: Build iOS release (no codesign)
         script: |
           flutter build ios --release --no-codesign
+      - name: Package .app into runner.ipa.zip
+        script: |
+          mkdir -p build/ios/archive
+          cd build/ios/iphoneos
+          zip -r ../../archive/runner.app.zip Runner.app
     artifacts:
-      - build/ios/iphoneos/Runner.app
+      - build/ios/archive/runner.app.zip
+
 

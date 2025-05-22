@@ -1,43 +1,28 @@
-name: my_app
-description: "A new Flutter project."
-publish_to: 'none'
+workflows:
+  ios-release:
+    name: iOS Release Build
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Установка зависимостей Flutter
+        script: |
+          flutter pub get
+      - name: Очистка предыдущих сборок
+        script: |
+          flutter clean
+      - name: Удаление флага '-G' из project.pbxproj
+        script: |
+          find . -name "project.pbxproj" -exec sed -i '' 's/-G//g' {} +
+      - name: Сборка iOS-приложения без подписи
+        script: |
+          flutter build ios --release --no-codesign
+      - name: Упаковка Runner.ipa в zip
+        script: |
+          cd build/ios/iphoneos
+          zip -r Runner.ipa.zip Runner.app
+    artifacts:
+      - build/ios/iphoneos/Runner.ipa.zip
 
-version: 1.0.0+1
-
-environment:
-  sdk: ^3.7.2
-
-dependencies:
-  flutter:
-    sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  intl: ^0.20.2
-  cupertino_icons: ^1.0.8
-  
-
-  # Добавленные зависимости
-  firebase_core: ^2.27.0
-  firebase_auth: ^4.17.0
-  cloud_firestore: ^4.15.0
-  provider: ^6.1.2
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^5.0.0
-
-flutter:
-  generate: true
-  uses-material-design: true
-
-  # Example assets section (optional)
-  # assets:
-  #   - images/
-
-  # Example fonts section (optional)
-  # fonts:
-  #   - family: CustomFont
-  #     fonts:
-  #       - asset: fonts/CustomFont-Regular.ttf
 
